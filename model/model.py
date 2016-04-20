@@ -89,7 +89,7 @@ def  gradient_boosted_regression_trees_model(sf, name):
 
 def model_features(sf):
     #'deep_features','tfidf','topic_0','topic_1','topic_2', ...
-    return = list(set(
+    return list(set(
                   sf.column_names()) - \
                   set(['id', 'category_id', 'category_name', 'count_words', 'image', 'price', 'topic']
                 ))
