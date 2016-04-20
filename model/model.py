@@ -61,7 +61,7 @@ def topic_model(sf, dataset_name):
 
 # Create a model.
 def nearest_neighbors(sf, name):
-    model = graphlab.nearest_neighbors.create(sf, features=list(feature_lst))
+    model = graphlab.nearest_neighbors.create(sf, features=model_features(sf))
     model.save(WEB_APP_DATA_PATH + 'similar_images_for_' + name)
     return model
 
