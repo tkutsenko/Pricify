@@ -5,7 +5,7 @@ def extract_image_features():
     #Used graphlab.neuralnet_classifier.NeuralNetClassifier.extract_features which takes an input dataset, propagates each example through the network, and returns an SArray of dense feature vectors, each of which is the concatenation of all the hidden unit values at layer[layer_id].
     #Used a pre-trained model for ImageNet, as described by Alex Krizhevsky et. al. It is located at http://s3.amazonaws.com/dato-datasets/deeplearning/imagenet_model_iter45
 
-    items = graphlab.SFrame.read_json('data/items.json')
+    items = graphlab.SFrame.read_json('../data/items.json')
     #Remove duplicate rows of the SFrame
     items = items.unique()
     items.remove_column('image')
@@ -49,7 +49,14 @@ def extract_image_features():
     apparel_test['deep_features'] = deep_learning_model.extract_features(apparel_test)
     home_test['deep_features'] = deep_learning_model.extract_features(home_test)
 
+    #Store into data folder
+
 
 def get_id(str):
     m = re.match( r'.+\/(\d+)\/[^\/]+$', str)
     return int(m.group(1))
+
+
+
+if __name__ == '__main__':
+    extract_image_features()
