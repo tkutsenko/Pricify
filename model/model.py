@@ -102,10 +102,9 @@ def run_and_save_model():
     models_lst = [features(model) for model in models_lst]
     phones_train, phones_test, home_train, home_test, apparel_train, apparel_test = models_lst
 
-    train_lst = phones_train, home_train, apparel_train
     train_dict = {'phones_train': phones_train, 'home_train': home_train, 'apparel_train': apparel_train}
 
-    for dataset_name, dataset in d.iteritems():
+    for dataset_name, dataset in train_dict.iteritems():
         dataset = topic_model(dataset, dataset_name)
         nearest_neighbors(dataset, dataset_name)
         random_forest_model(dataset, dataset_name)
