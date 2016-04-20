@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Hello, World!</title>
+        </head>
+      <body>
+        <h1>Dashboard</h1>
+          <p>
+            Our cute model
+          </p>
+        <table border="1">
+          <thead>
+            <th>Name</th>
+            <th>Probability</th>
+            <th>Prediction</th>
+          </thead>
+          <tbody>
+            {% for name, prob, predict in data %}  <!--start for loop over variable data-->
+              {% if prob > 0.5 %}
+                <tr bgcolor='red' >                  <!-- on each row -->
+              {% else %}
+                <tr>
+              {%endif%}
+                <td>{{ name }}</td>    <!-- write variable x -->
+                <td align="center">{{ prob }}</td>    <!-- write variable y -->
+                <td align="center">{{ predict }}</td>    <!-- write variable y -->
+              </tr>                   <!-- end the row -->
+            {% endfor %}            <!-- end for loop -->
+          </tbody>
+        </table>
+      </body>
+    </html>
