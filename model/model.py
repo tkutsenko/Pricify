@@ -2,6 +2,7 @@ import graphlab
 import re, string
 import graphlab.aggregate as agg
 import os
+from graphlab.toolkits.cross_validation import shuffle
 
 DATA_PATH = "../data/"
 WEB_APP_DATA_PATH = '../pricify/data/'
@@ -95,6 +96,18 @@ def model_features(sf):
                 ))
 
 
+# Model to classify categiry by image, title and description
+def categiry_classifier(sf):
+    model = graphlab.boosted_trees_classifier.create(sf, target='category_name',
+                                          features=model_features(sf),
+                                          max_iterations = 20,
+                                          max_depth =  3
+                                          )
+
+    model.save(WEB_APP_DATA_PATH + 'boosted_trees_category_classifier')
+    return model
+
+model = graphlab.classifier.create(image_train, target='category_name', features=list(feature_lst))
 
 def run_and_save_model():
     #phones_train, phones_test, home_train, home_test, apparel_train, apparel_test = read_data()
@@ -109,6 +122,10 @@ def run_and_save_model():
         nearest_neighbors(dataset, dataset_name)
         random_forest_model(dataset, dataset_name)
         gradient_boosted_regression_trees_model(dataset, dataset_name)
+
+    image_train = phones_train.append(home_train).append(apparel_train)
+    shuffle(image_train, random_seed=0)
+    categiry_classifier(image_train)
 
 if __name__ == '__main__':
     run_and_save_model()

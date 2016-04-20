@@ -56,7 +56,5 @@ def get_id(str):
     m = re.match( r'.+\/(\d+)\/[^\/]+$', str)
     return int(m.group(1))
 
-
-
 if __name__ == '__main__':
     extract_image_features()
