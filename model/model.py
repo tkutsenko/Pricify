@@ -106,7 +106,7 @@ def nearest_neighbors_categiry_classifier(sf, name):
     return model
 
 # Nearest Neighbors models to classify categiry by image, title and description
-def categiry_classifier(sf):
+def category_classifier(sf):
     model = graphlab.boosted_trees_classifier.create(sf, target='category_name',
                                           features=['deep_features', 'count_words'],
                                           max_iterations = 20,
@@ -118,7 +118,6 @@ def categiry_classifier(sf):
 
 
 def run_and_save_model():
-    #phones_train, phones_test, home_train, home_test, apparel_train, apparel_test = read_data()
     models_lst = read_data()
     models_lst = [features(model) for model in models_lst]
     phones_train, phones_test, home_train, home_test, apparel_train, apparel_test = models_lst
@@ -134,7 +133,7 @@ def run_and_save_model():
 
     image_train = phones_train.append(home_train).append(apparel_train)
     shuffle(image_train, random_seed=0)
-    categiry_classifier(image_train)
+    category_classifier(image_train)
 
 if __name__ == '__main__':
     run_and_save_model()

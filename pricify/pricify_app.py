@@ -4,6 +4,7 @@ import re, string
 import graphlab.aggregate as agg
 import os
 from werkzeug import secure_filename
+from pricify import load_models
 
 # This is the path to the upload directory
 UPLOAD_FOLDER = 'public/uploads'
@@ -108,7 +109,10 @@ def uploaded_file(filename):
 #         return ""
 
 if __name__ == '__main__':
-    #model = load_models()
+    boosted_trees_category_classifier, topic_model_phones, topic_model_apparel,
+    topic_model_home, boosted_trees_regression_for_phones, boosted_trees_regression_for_apparel,
+    boosted_trees_regression_for_home, similar_images_for_phones, similar_images_for_apparel_train,
+    similar_images_for_home = load_models()
 
     # Start Flask app
     app.run(host='0.0.0.0', port=PORT, debug=True)
