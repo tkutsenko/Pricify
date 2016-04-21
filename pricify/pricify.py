@@ -27,8 +27,11 @@ def load_models():
     #similar_images_for_home
     sih = graphlab.load_model(DATA_PATH + 'similar_images_for_home_train')
 
+    #neural network trained on the 1.2 million images of the ImageNet Challenge.
+    deep_learning_model = graphlab.load_model('../data/imagenet_model')
+
     #[boosted_trees_category_classifier, topic_model_phones, topic_model_apparel,
     #topic_model_home, boosted_trees_regression_for_phones, boosted_trees_regression_for_apparel,
     #boosted_trees_regression_for_home, similar_images_for_phones, similar_images_for_apparel_train,
-    #similar_images_for_home]
-    return [btcc, tmp, tma, tmh, btrp, btra, btrh, sip, sia, sih]
+    #similar_images_for_home, deep_learning_model]
+    return [btcc, tmp, tma, tmh, btrp, btra, btrh, sip, sia, sih, deep_learning_model]

@@ -40,7 +40,7 @@ def extract_image_features():
     home_train, home_test = home_with_images.random_split(.8, seed=0)
 
     #Used the neural network trained on the 1.2 million images of the ImageNet Challenge.
-    deep_learning_model = graphlab.load_model('data/imagenet_model')
+    deep_learning_model = graphlab.load_model('../data/imagenet_model')
 
     phones_train['deep_features'] = deep_learning_model.extract_features(phones_train)
     apparel_train['deep_features'] = deep_learning_model.extract_features(apparel_train)
