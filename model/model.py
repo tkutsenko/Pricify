@@ -62,7 +62,9 @@ def topic_model(sf, dataset_name):
 
 # Create a model.
 def nearest_neighbors(sf, name):
-    model = graphlab.nearest_neighbors.create(sf, features=model_features(sf))
+    model = graphlab.nearest_neighbors.create(sf,
+                                              features=model_features(sf),
+                                              label='id')
     model.save(WEB_APP_DATA_PATH + 'similar_images_for_' + name)
     return model
 
@@ -97,9 +99,16 @@ def model_features(sf):
 
 
 # Model to classify categiry by image, title and description
+def nearest_neighbors_categiry_classifier(sf, name):
+    model = graphlab.nearest_neighbors.create(sf, features=['deep_features', 'count_words'], label='id')
+
+    model.save(WEB_APP_DATA_PATH + 'nearest_neighbors_categiry_for_' + name)
+    return model
+
+# Nearest Neighbors models to classify categiry by image, title and description
 def categiry_classifier(sf):
     model = graphlab.boosted_trees_classifier.create(sf, target='category_name',
-                                          features=model_features(sf),
+                                          features=['deep_features', 'count_words'],
                                           max_iterations = 20,
                                           max_depth =  3
                                           )
@@ -107,7 +116,6 @@ def categiry_classifier(sf):
     model.save(WEB_APP_DATA_PATH + 'boosted_trees_category_classifier')
     return model
 
-model = graphlab.classifier.create(image_train, target='category_name', features=list(feature_lst))
 
 def run_and_save_model():
     #phones_train, phones_test, home_train, home_test, apparel_train, apparel_test = read_data()
@@ -122,6 +130,7 @@ def run_and_save_model():
         nearest_neighbors(dataset, dataset_name)
         random_forest_model(dataset, dataset_name)
         gradient_boosted_regression_trees_model(dataset, dataset_name)
+        nearest_neighbors_categiry_classifier(dataset, dataset_name)
 
     image_train = phones_train.append(home_train).append(apparel_train)
     shuffle(image_train, random_seed=0)
