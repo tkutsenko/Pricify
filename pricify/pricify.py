@@ -28,7 +28,7 @@ def load_models():
     sih = graphlab.load_model(DATA_PATH + 'similar_images_for_home_train')
 
     #neural network trained on the 1.2 million images of the ImageNet Challenge.
-    deep_learning_model = graphlab.load_model('../data/imagenet_model')
+    deep_learning_model = graphlab.load_model(DATA_PATH + 'imagenet_model')
 
     #[boosted_trees_category_classifier, topic_model_phones, topic_model_apparel,
     #topic_model_home, boosted_trees_regression_for_phones, boosted_trees_regression_for_apparel,

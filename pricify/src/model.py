@@ -28,6 +28,15 @@ def features(sf):
     #Remove outliers
     sf = sf[sf['price'] < 1500]
 
+    #Add count_words feature
+    sf = count_words(sf)
+
+    #TF-IDF (term frequency - inverse document frequency)
+    sf['tfidf'] = graphlab.text_analytics.tf_idf(sf['count_words'])
+
+    return sf.select_columns(features_lst)
+
+def count_words(sf):
     # Combine words from title and description
     sf['words'] = sf['title'] + ' ' + sf['description']
     # Remove punctuation
@@ -41,10 +50,7 @@ def features(sf):
     sf['count_words'] = graphlab.text_analytics.count_words(sf['words'])
     #Text cleaning. Remove stop words.
     sf['count_words'] = sf['count_words'].dict_trim_by_keys(graphlab.text_analytics.stopwords(), exclude=True)
-    #TF-IDF (term frequency - inverse document frequency)
-    sf['tfidf'] = graphlab.text_analytics.tf_idf(sf['count_words'])
-
-    return sf.select_columns(features_lst)
+    return sf
 
 def topic_model(sf, dataset_name):
     #Used Topic models from GraphLab Create to generate topic by title and description
@@ -59,6 +65,12 @@ def topic_model(sf, dataset_name):
     for i in  xrange(topics_number):
         sf['topic_' + str(i)] = sf['topic'].apply(lambda x: (1 if int(x) == i else 0))
     return sf
+
+def image_deep_features(file_path, deep_learning_model):
+    img = graphlab.Image(file_path)
+    image_sf = graphlab.SFrame({'image': [img]})
+    image_sf['deep_features'] = deep_learning_model.extract_features(image_sf)
+    return image_sf
 
 # Create a model.
 def nearest_neighbors(sf, name):
