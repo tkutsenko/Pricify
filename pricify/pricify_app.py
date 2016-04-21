@@ -9,7 +9,7 @@ from pricify import load_models
 from src.model import count_words, image_deep_features, add_topic_fields
 
 # This is the path to the upload directory
-UPLOAD_FOLDER = 'public/uploads/'
+UPLOAD_FOLDER = 'static/uploads/'
 # These are the extension that we are accepting to be uploaded
 ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'png'])
 
@@ -103,7 +103,45 @@ def predict_price():
     #Predict price
     price = round(price_model.predict(sf)[0])
 
-    return render_template('price.html', price = price)
+    return render_template('price.html', price = price, image = filename)
+
+
+@app.route('/neighbors')
+def neighbors_price():
+    title = session['title']
+    description = session['description']
+
+    #Build dataframe to vectorize input data
+    sf = graphlab.SFrame({'title' : [title], 'description' : [description]})
+    sf = count_words(sf)
+    filename = app.config['UPLOAD_FOLDER'] + request.args['filename']
+    sf = sf.join(image_deep_features(filename, deep_learning_model), how='left')
+
+    #Define category
+    category = boosted_trees_category_classifier.predict(sf, output_type='class')[0]
+
+    #Define data class
+    if category == 'Cell Phones':
+        topic_model = topic_model_phones
+        price_model = boosted_trees_regression_for_phones
+        neighbors_model = similar_images_for_phones
+    elif category in ['Furniture', 'Household', 'Home & Garden']:
+        topic_model = topic_model_home
+        price_model = boosted_trees_regression_for_home
+        neighbors_model = similar_images_for_home
+    else: # 'Baby & Kids', 'Clothing & Shoes'
+        topic_model = topic_model_apparel
+        price_model = boosted_trees_regression_for_apparel
+        neighbors_model = similar_images_for_apparel
+
+    #Add topic fields
+    sf = add_topic_fields(sf, topic_model)
+
+    #Find nearest_neighbors
+    neighbors = neighbors_model.query(sf, k = 5)
+    print neighbors
+
+    return render_template('neighbors.html', neighbors = neighbors, image = filename)
 
 
 # This route will clear the variable sessions
@@ -120,7 +158,7 @@ def clearsession():
 if __name__ == '__main__':
     boosted_trees_category_classifier, topic_model_phones, topic_model_apparel, \
     topic_model_home, boosted_trees_regression_for_phones, boosted_trees_regression_for_apparel, \
-    boosted_trees_regression_for_home, similar_images_for_phones, similar_images_for_apparel_train, \
+    boosted_trees_regression_for_home, similar_images_for_phones, similar_images_for_apparel, \
     similar_images_for_home, deep_learning_model = load_models()
 
     # Start Flask app

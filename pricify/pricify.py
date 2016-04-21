@@ -13,6 +13,13 @@ def load_models():
     #topic_model_home
     tmh = graphlab.load_model(DATA_PATH + 'topic_model_home_train')
 
+    #words vectorizer phones
+    tmp = graphlab.load_model(DATA_PATH + 'vectorizer_phones_train')
+    #words vectorizer apparel
+    tma = graphlab.load_model(DATA_PATH + 'vectorizer_apparel_train')
+    #words vectorizer home
+    tmh = graphlab.load_model(DATA_PATH + 'vectorizer_home_train')
+
     #boosted_trees_regression_for_phones
     btrp = graphlab.load_model(DATA_PATH + 'boosted_trees_regression_for_phones_train')
     #boosted_trees_regression_for_apparel

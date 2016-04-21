@@ -52,6 +52,11 @@ def count_words(sf):
     sf['count_words'] = sf['count_words'].dict_trim_by_keys(graphlab.text_analytics.stopwords(), exclude=True)
     return sf
 
+def tf_idf_vectorizer(sf, dataset_name):
+    encoder = graphlab.feature_engineering.TFIDF('count_words')
+    encoder = encoder.fit(sf)
+    encoder.save(WEB_APP_DATA_PATH + 'vectorizer_' + dataset_name)
+
 topics_number = 100
 
 def topic_model(sf, dataset_name):
@@ -147,6 +152,7 @@ def run_and_save_model():
         random_forest_model(dataset, dataset_name)
         gradient_boosted_regression_trees_model(dataset, dataset_name)
         nearest_neighbors_categiry_classifier(dataset, dataset_name)
+        tf_idf_vectorizer(dataset, dataset_name)
 
     image_train = phones_train.append(home_train).append(apparel_train)
     shuffle(image_train, random_seed=0)
