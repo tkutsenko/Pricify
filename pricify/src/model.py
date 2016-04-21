@@ -52,15 +52,20 @@ def count_words(sf):
     sf['count_words'] = sf['count_words'].dict_trim_by_keys(graphlab.text_analytics.stopwords(), exclude=True)
     return sf
 
+topics_number = 100
+
 def topic_model(sf, dataset_name):
     #Used Topic models from GraphLab Create to generate topic by title and description
-    topics_number = 100
     model = graphlab.topic_model.create(sf['count_words'], num_topics=topics_number, num_iterations=100)
 
     #Save model to the web application
     model.save(WEB_APP_DATA_PATH + 'topic_model_' + dataset_name)
 
     #Add topic fields
+    sf = add_topic_fields(sf, model)
+    return sf
+
+def add_topic_fields(sf, model):
     sf['topic'] = model.predict(sf['count_words'])
     for i in  xrange(topics_number):
         sf['topic_' + str(i)] = sf['topic'].apply(lambda x: (1 if int(x) == i else 0))

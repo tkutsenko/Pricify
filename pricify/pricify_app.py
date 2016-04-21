@@ -6,7 +6,7 @@ import os
 from werkzeug import secure_filename
 from werkzeug.datastructures import FileStorage
 from pricify import load_models
-from src.model import count_words, image_deep_features
+from src.model import count_words, image_deep_features, add_topic_fields
 
 # This is the path to the upload directory
 UPLOAD_FOLDER = 'public/uploads/'
@@ -84,22 +84,26 @@ def predict_price():
     category = boosted_trees_category_classifier.predict(sf, output_type='class')[0]
 
     #Define data class
-    
+    if category == 'Cell Phones':
+        topic_model = topic_model_phones
+        price_model = boosted_trees_regression_for_phones
+        neighbors_model = similar_images_for_phones
+    elif category in ['Furniture', 'Household', 'Home & Garden']:
+        topic_model = topic_model_home
+        price_model = boosted_trees_regression_for_home
+        neighbors_model = similar_images_for_home
+    else: # 'Baby & Kids', 'Clothing & Shoes'
+        topic_model = topic_model_apparel
+        price_model = boosted_trees_regression_for_apparel
+        neighbors_model = similar_images_for_apparel
 
-    # #Build dataframe to vectorize input data
-    # df = pd.DataFrame([data], index=[0])
-    #
-    # #Predict for one line of data
-    # predict, probably = predict_for_input(df, model, pickles)
-    #
-    # #Store data into global variable
-    # print probably, predict
-    # name = "{0}".format(df['name'][0])
-    # DATA.append(([name, probably, predict]))
-    #
-    # #DATA.append(json.dumps(request.json, sort_keys=True, indent=4, separators=(',', ': ')))
-    # TIMESTAMP.append(time.time())
-    return render_template('price.html')
+    #Add topic fields
+    sf = add_topic_fields(sf, topic_model)
+
+    #Predict price
+    price = round(price_model.predict(sf)[0])
+
+    return render_template('price.html', price = price)
 
 
 # This route will clear the variable sessions
@@ -112,59 +116,6 @@ def clearsession():
     # Redirect the user to the main page
     return redirect(url_for('index'))
 
-
-# # My word counter app
-# @app.route('/predict', methods=['POST'] )
-# def word_counter():
-#     word = str(request.form['user_input'])
-#     topic = model.predict(vectorizer.transform([word]))
-#     proba = model.predict_proba(vectorizer.transform([word]))
-#     page = 'We think that word {0} is from {1} topic.'
-#     return page.format(word, topic[0])
-#
-#
-# @app.route('/score', methods=['POST'])
-# def score():
-#
-#     #get data from  request
-#     data = request.json
-#
-#     #Build dataframe to vectorize input data
-#     df = pd.DataFrame([data], index=[0])
-#
-#     #Predict for one line of data
-#     predict, probably = predict_for_input(df, model, pickles)
-#
-#     #Store data into global variable
-#     print probably, predict
-#     name =  "{0}".format(df['name'][0])
-#     DATA.append(([name, probably, predict]))
-#
-#     #DATA.append(json.dumps(request.json, sort_keys=True, indent=4, separators=(',', ': ')))
-#     TIMESTAMP.append(time.time())
-#     return ""
-#
-#
-# @app.route('/check')
-# def check():
-#     line1 = "Number of data points: {0}".format(len(DATA))
-#     if DATA and TIMESTAMP:
-#         print DATA
-#         dt = datetime.fromtimestamp(TIMESTAMP[-1])
-#         data_time = dt.strftime('%Y-%m-%d %H:%M:%S')
-#         line2 = "Latest datapoint received at: {0}".format(data_time)
-#         line3 = DATA[-1]
-#         output = "{0}\n\n{1}\n\n{2}".format(line1, line2, line3)
-#     else:
-#         output = line1
-#     return output, 200, {'Content-Type': 'text/css; charset=utf-8'}
-#
-# @app.route('/dashboard')
-# def dashboard():
-#     if DATA:
-#         return render_template('table.html', data=DATA)
-#     else:
-#         return ""
 
 if __name__ == '__main__':
     boosted_trees_category_classifier, topic_model_phones, topic_model_apparel, \
