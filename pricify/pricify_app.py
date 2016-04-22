@@ -5,7 +5,7 @@ import graphlab.aggregate as agg
 import os
 from werkzeug import secure_filename
 from werkzeug.datastructures import FileStorage
-from pricify import load_models
+from pricify import load_models, load_data
 from src.model import count_words, image_deep_features, add_topic_fields
 
 # This is the path to the upload directory
