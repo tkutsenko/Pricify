@@ -111,11 +111,12 @@ def predict_price():
     price = round(price_model.predict(sf)[0])
 
     #Find nearest_neighbors
-    neighbors = neighbors_model.query(sf, k = 5)
+    neighbors = neighbors_model.query(item, k = 5, label='id')
     neighbors = neighbors.groupby(key_columns='query_label', operations={"neighbours":agg.CONCAT("reference_label")})
     neighbors_lst = neighbors['neighbours'][0]
 
-    nb = [neighbors_model['image'][id] for id neighbors_lst]
+    nb = [neighbors_model['image'][id] for in neighbors_lst]
+    print nb
 
     return render_template('price.html', price = price, category = category, image = filename)
 
