@@ -4,8 +4,8 @@ import graphlab.aggregate as agg
 import os
 from graphlab.toolkits.cross_validation import shuffle
 
-DATA_PATH = "../data/"
-WEB_APP_DATA_PATH = '../pricify/data/'
+DATA_PATH = "../../data/"
+WEB_APP_DATA_PATH = '../data/'
 
 def read_data():
     #Load image analysis datasets.
