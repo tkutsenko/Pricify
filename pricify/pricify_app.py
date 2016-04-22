@@ -115,7 +115,7 @@ def predict_price():
     neighbors = neighbors.groupby(key_columns='query_label', operations={"neighbours":agg.CONCAT("reference_label")})
     neighbors_lst = neighbors['neighbours'][0]
 
-    nb = [neighbors_model['image'][id] for in neighbors_lst]
+    nb = [neighbors_model['image'][id] for id in neighbors_lst]
     print nb
 
     return render_template('price.html', price = price, category = category, image = filename)
