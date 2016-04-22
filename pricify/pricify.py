@@ -43,3 +43,11 @@ def load_models():
     #boosted_trees_regression_for_home, similar_images_for_phones, similar_images_for_apparel,
     #similar_images_for_home, deep_learning_model]
     return [btcc, tmp, tma, tmh, vp, va, vh, btrp, btra, btrh, sip, sia, sih, deep_learning_model]
+
+
+def load_data():
+    # Load prices for nearest neighbors
+    phones = graphlab.load_sframe('phones_with_ids')[['id', 'price']]
+    home = graphlab.load_sframe('home_with_ids')[['id', 'price']]
+    apparel = graphlab.load_sframe('apparel_with_ids')[['id', 'price']]
+    return phones, home, apparel

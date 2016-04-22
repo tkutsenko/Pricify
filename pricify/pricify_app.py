@@ -10,12 +10,14 @@ from src.model import count_words, image_deep_features, add_topic_fields
 
 # This is the path to the upload directory
 UPLOAD_FOLDER = 'static/uploads/'
+IMAGES_FOLDER = 'static/images/'
 # These are the extension that we are accepting to be uploaded
 ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'png'])
 
 # Initialize the Flask application
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['IMAGES_FOLDER'] = IMAGES_FOLDER
 PORT = 5000
 
 # Sessions variables are stored client side, on the users browser
@@ -60,15 +62,6 @@ def upload():
         #redirect(url_for('.do_foo', messages=messages))
 
 
-# This route is expecting a parameter containing the name
-# of a file. Then it will locate that file on the upload
-# directory and show it on the browser, so if the user uploads
-# an image, that image is going to be show after the upload
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
-
 @app.route('/price')
 def predict_price():
     title = session['title']
@@ -89,16 +82,22 @@ def predict_price():
         price_model = boosted_trees_regression_for_phones
         neighbors_model = similar_images_for_phones
         vectorizer = vectorizer_phones
+        data = phones
+        category_name = 'phones'
     elif category in ['Furniture', 'Household', 'Home & Garden']:
         topic_model = topic_model_home
         price_model = boosted_trees_regression_for_home
         neighbors_model = similar_images_for_home
         vectorizer = vectorizer_home
+        data = home
+        category_name = 'home'
     else: # 'Baby & Kids', 'Clothing & Shoes'
         topic_model = topic_model_apparel
         price_model = boosted_trees_regression_for_apparel
         neighbors_model = similar_images_for_apparel
         vectorizer = vectorizer_apparel
+        data = apparel
+        category_name = 'apparel'
 
     #Add topic fields
     sf = add_topic_fields(sf, topic_model)
@@ -114,10 +113,10 @@ def predict_price():
     neighbors = neighbors_model.query(sf, k = 5)
     neighbors = neighbors.groupby(key_columns='query_label', operations={"neighbours":agg.CONCAT("reference_label")})
     neighbors_lst = neighbors['neighbours'][0]
+    similar_offers = [data[data['id'] == int(id)] for id in neighbors_lst]
+    similar_offers['image_path'] = app.config['IMAGES_FOLDER'] + category_name + "/" + similar_offers['id'] + '.jpg'
 
-    print neighbors_lst
-
-    return render_template('price.html', price = price, category = category, image = filename)
+    return render_template('price.html', price = price, category = category, image = filename, similar_offers = similar_offers)
 
 
 # This route will clear the variable sessions
@@ -137,6 +136,8 @@ if __name__ == '__main__':
     boosted_trees_regression_for_phones, boosted_trees_regression_for_apparel, \
     boosted_trees_regression_for_home, similar_images_for_phones, similar_images_for_apparel, \
     similar_images_for_home, deep_learning_model = load_models()
+
+    phones, home, apparel = phones, home, apparel = load_data()
 
     # Start Flask app
     app.run(host='0.0.0.0', port=PORT, debug=True)
