@@ -7,15 +7,18 @@
   <body>
     <div class="container">
       <div class="header">
-        <h3 class="text-muted">We are trying to predict your product price</h3>
+        <h3 class="text-muted">We are trying to predict product price</h3>
       </div>
       <hr/>
       <p>
           Your product:
-          <img src="{{ url_for('static', filename='uploads/258eaf22f49446c6a445a66427aa6ed9.jpg') }}"
+          <img src="{{ image }}"
           width="189" height="255" alt="item"></img>
       </p>
-
+      <p>
+          Your product category:
+          {{ category }}
+      </p>
       <p>
           Suggested price: {{ price }}
       </p>

@@ -9,16 +9,13 @@ WEB_APP_DATA_PATH = '../data/'
 
 def read_data():
     #Load image analysis datasets.
-    #Data was reduced to 6 categories in 3 groups: phones, home (Furniture, Household, Home & Garden), apparel (Baby & Kids, Clothing & Shoes) This dataset is already split into a training set and test set (80/20).
+    #Data was reduced to 6 categories in 3 groups: phones, home (Furniture, Household, Home & Garden), apparel (Baby & Kids, Clothing & Shoes).
 
-    phones_train = graphlab.load_sframe(DATA_PATH + 'phones_train')
-    phones_test = graphlab.load_sframe(DATA_PATH + 'phones_test')
-    home_train = graphlab.load_sframe(DATA_PATH + 'home_train')
-    home_test = graphlab.load_sframe(DATA_PATH + 'home_test')
-    apparel_train = graphlab.load_sframe(DATA_PATH + 'apparel_train')
-    apparel_test = graphlab.load_sframe(DATA_PATH + 'apparel_test')
+    phones_set = graphlab.load_sframe(DATA_PATH + 'phones_with_ids')
+    home_set = graphlab.load_sframe(DATA_PATH + 'home_with_ids')
+    apparel_set = graphlab.load_sframe(DATA_PATH + 'apparel_with_ids')
 
-    return phones_train, phones_test, home_train, home_test, apparel_train, apparel_test
+    return phones_set, home_set, apparel_set
 
 def features(sf):
     features_lst = ['id', 'category_id', 'category_name', 'count_words', 'tfidf', 'image', 'deep_features','price']
@@ -142,11 +139,11 @@ def category_classifier(sf):
 def run_and_save_model():
     models_lst = read_data()
     models_lst = [features(model) for model in models_lst]
-    phones_train, phones_test, home_train, home_test, apparel_train, apparel_test = models_lst
+    phones_set, home_set, apparel_set = models_lst
 
-    train_dict = {'phones_train': phones_train, 'home_train': home_train, 'apparel_train': apparel_train}
+    set_dict = {'phones': phones_set, 'home': home_set, 'apparel': apparel_set}
 
-    for dataset_name, dataset in train_dict.iteritems():
+    for dataset_name, dataset in set_dict.iteritems():
         dataset = topic_model(dataset, dataset_name)
         nearest_neighbors(dataset, dataset_name)
         random_forest_model(dataset, dataset_name)
@@ -154,9 +151,9 @@ def run_and_save_model():
         nearest_neighbors_categiry_classifier(dataset, dataset_name)
         tf_idf_vectorizer(dataset, dataset_name)
 
-    image_train = phones_train.append(home_train).append(apparel_train)
-    shuffle(image_train, random_seed=0)
-    category_classifier(image_train)
+    image_set = phones_set.append(home_set).append(apparel_set)
+    shuffle(image_set, random_seed=0)
+    category_classifier(image_set)
 
 if __name__ == '__main__':
     run_and_save_model()

@@ -50,6 +50,7 @@ def extract_image_features():
     home_test['deep_features'] = deep_learning_model.extract_features(home_test)
 
     #Store into data folder
+    phones_train.save('data/phones_train')
 
 
 def get_id(str):

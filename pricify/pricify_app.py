@@ -88,60 +88,36 @@ def predict_price():
         topic_model = topic_model_phones
         price_model = boosted_trees_regression_for_phones
         neighbors_model = similar_images_for_phones
+        vectorizer = vectorizer_phones
     elif category in ['Furniture', 'Household', 'Home & Garden']:
         topic_model = topic_model_home
         price_model = boosted_trees_regression_for_home
         neighbors_model = similar_images_for_home
+        vectorizer = vectorizer_home
     else: # 'Baby & Kids', 'Clothing & Shoes'
         topic_model = topic_model_apparel
         price_model = boosted_trees_regression_for_apparel
         neighbors_model = similar_images_for_apparel
+        vectorizer = vectorizer_apparel
 
     #Add topic fields
     sf = add_topic_fields(sf, topic_model)
+
+    #Add TF-IDF
+    transformed_sf = vectorizer.transform(sf)
+    sf['tfidf'] = transformed_sf['count_words']
 
     #Predict price
     price = round(price_model.predict(sf)[0])
 
-    return render_template('price.html', price = price, image = filename)
-
-
-@app.route('/neighbors')
-def neighbors_price():
-    title = session['title']
-    description = session['description']
-
-    #Build dataframe to vectorize input data
-    sf = graphlab.SFrame({'title' : [title], 'description' : [description]})
-    sf = count_words(sf)
-    filename = app.config['UPLOAD_FOLDER'] + request.args['filename']
-    sf = sf.join(image_deep_features(filename, deep_learning_model), how='left')
-
-    #Define category
-    category = boosted_trees_category_classifier.predict(sf, output_type='class')[0]
-
-    #Define data class
-    if category == 'Cell Phones':
-        topic_model = topic_model_phones
-        price_model = boosted_trees_regression_for_phones
-        neighbors_model = similar_images_for_phones
-    elif category in ['Furniture', 'Household', 'Home & Garden']:
-        topic_model = topic_model_home
-        price_model = boosted_trees_regression_for_home
-        neighbors_model = similar_images_for_home
-    else: # 'Baby & Kids', 'Clothing & Shoes'
-        topic_model = topic_model_apparel
-        price_model = boosted_trees_regression_for_apparel
-        neighbors_model = similar_images_for_apparel
-
-    #Add topic fields
-    sf = add_topic_fields(sf, topic_model)
-
     #Find nearest_neighbors
     neighbors = neighbors_model.query(sf, k = 5)
-    print neighbors
+    neighbors = neighbors.groupby(key_columns='query_label', operations={"neighbours":agg.CONCAT("reference_label")})
+    neighbors_lst = neighbors['neighbours'][0]
 
-    return render_template('neighbors.html', neighbors = neighbors, image = filename)
+    nb = [neighbors_model['image'][id] for id neighbors_lst]
+
+    return render_template('price.html', price = price, category = category, image = filename)
 
 
 # This route will clear the variable sessions
