@@ -111,7 +111,7 @@ def predict_price():
     price = round(price_model.predict(sf)[0])
 
     #Find nearest_neighbors
-    neighbors = neighbors_model.query(item, k = 5, label='id')
+    neighbors = neighbors_model.query(sf, k = 5, label='id')
     neighbors = neighbors.groupby(key_columns='query_label', operations={"neighbours":agg.CONCAT("reference_label")})
     neighbors_lst = neighbors['neighbours'][0]
 
