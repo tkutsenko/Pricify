@@ -114,9 +114,9 @@ def predict_price():
     neighbors = neighbors.groupby(key_columns='query_label', operations={"neighbours":agg.CONCAT("reference_label")})
     neighbors_lst = neighbors['neighbours'][0]
 
-    print neighbors_lst
-
     similar_offers = [data[data['id'] == int(id)] for id in neighbors_lst]
+    print similar_offers
+
     #similar_offers['image_path'] = app.config['IMAGES_FOLDER'] + category_name + "/" + similar_offers['id'] + '.jpg'
 
     return render_template('price.html', price = price, category = category, image = filename, offers = similar_offers)
