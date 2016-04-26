@@ -24,6 +24,22 @@
       <p>
           Similar Offers: similar_offers
       </p>
+      <table border="1">
+        <tbody>
+          <tr>
+            {% for offer in offers %}  <!--start for loop over variable data-->
+              <td>
+                <img src="{{ offer['image_path'] }}" width="189" height="255" alt="item"></img>
+              </td>
+            {% endfor %}
+          </tr>
+          <tr>
+            {% for offer in similar_offers %}  <!--start for loop over variable data-->
+              <td align="center">{{ offer['price'] }}</td>
+            {% endfor %}            <!-- end for loop -->
+          </tr>
+        </tbody>
+      </table>
     </div>
   </body>
 </html>
