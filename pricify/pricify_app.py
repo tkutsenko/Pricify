@@ -117,7 +117,7 @@ def predict_price():
     similar_offers = data.filter_by(neighbors_lst, 'id')
     print similar_offers
 
-    similar_offers['image_path'] = app.config['IMAGES_FOLDER'] + category_name + "/" + similar_offers['id'] + '.jpg'
+    similar_offers['image_path'] = app.config['IMAGES_FOLDER'] + category_name + "/" + str(similar_offers['id']) + '.jpg'
 
     return render_template('price.html', price = price, category = category, image = filename, offers = similar_offers)
 
