@@ -113,10 +113,13 @@ def predict_price():
     neighbors = neighbors_model.query(sf, k = 5)
     neighbors = neighbors.groupby(key_columns='query_label', operations={"neighbours":agg.CONCAT("reference_label")})
     neighbors_lst = neighbors['neighbours'][0]
-    similar_offers = [data[data['id'] == int(id)] for id in neighbors_lst]
-    similar_offers['image_path'] = app.config['IMAGES_FOLDER'] + category_name + "/" + similar_offers['id'] + '.jpg'
 
-    return render_template('price.html', price = price, category = category, image = filename, similar_offers = similar_offers)
+    print neighbors_lst
+
+    similar_offers = [data[data['id'] == int(id)] for id in neighbors_lst]
+    #similar_offers['image_path'] = app.config['IMAGES_FOLDER'] + category_name + "/" + similar_offers['id'] + '.jpg'
+
+    return render_template('price.html', price = price, category = category, image = filename, offers = similar_offers)
 
 
 # This route will clear the variable sessions
@@ -137,7 +140,7 @@ if __name__ == '__main__':
     boosted_trees_regression_for_home, similar_images_for_phones, similar_images_for_apparel, \
     similar_images_for_home, deep_learning_model = load_models()
 
-    phones, home, apparel = phones, home, apparel = load_data()
+    phones, home, apparel = load_data()
 
     # Start Flask app
     app.run(host='0.0.0.0', port=PORT, debug=True)

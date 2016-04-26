@@ -17,6 +17,10 @@ def read_data():
 
     return phones_set, home_set, apparel_set
 
+def save_prices(sf, name):
+    data = sf[['id', 'price']]
+    data.save(DATA_PATH + name)
+
 def features(sf):
     features_lst = ['id', 'category_id', 'category_name', 'count_words', 'tfidf', 'image', 'deep_features','price']
 
@@ -150,10 +154,12 @@ def run_and_save_model():
         gradient_boosted_regression_trees_model(dataset, dataset_name)
         nearest_neighbors_categiry_classifier(dataset, dataset_name)
         tf_idf_vectorizer(dataset, dataset_name)
+        save_prices(dataset, dataset_name + "_s")
 
     image_set = phones_set.append(home_set).append(apparel_set)
     shuffle(image_set, random_seed=0)
     category_classifier(image_set)
+
 
 if __name__ == '__main__':
     run_and_save_model()

@@ -47,10 +47,7 @@ def load_models():
 
 def load_data():
     # Load prices for nearest neighbors
-    phones = graphlab.load_sframe(DATA_PATH + 'phones_with_ids')[['id', 'price']]
-    home = graphlab.load_sframe(DATA_PATH + 'home_with_ids')[['id', 'price']]
-    apparel = graphlab.load_sframe(DATA_PATH + 'apparel_with_ids')[['id', 'price']]
-    phones.save(DATA_PATH + 'phones_with_ids_s')
-    home.save(DATA_PATH + 'home_with_ids_s')
-    apparel.save(DATA_PATH + 'apparel_with_ids_s')
+    phones = graphlab.load_sframe(DATA_PATH + 'phones_with_ids_s')
+    home = graphlab.load_sframe(DATA_PATH + 'home_with_ids_s')
+    apparel = graphlab.load_sframe(DATA_PATH + 'apparel_with_ids_s')
     return phones, home, apparel
