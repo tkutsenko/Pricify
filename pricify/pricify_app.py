@@ -73,7 +73,7 @@ def predict_price():
     filename = app.config['UPLOAD_FOLDER'] + request.args['filename']
     image_sf = image_deep_features(filename, deep_learning_model)
     print image_sf
-    sf = sf.join(image_sf, how='left')
+    sf['deep_features'] = image_sf['deep_features']
     print sf
     print "---------------"
 
