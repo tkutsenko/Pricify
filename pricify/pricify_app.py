@@ -71,7 +71,11 @@ def predict_price():
     sf = graphlab.SFrame({'title' : [title], 'description' : [description]})
     sf = count_words(sf)
     filename = app.config['UPLOAD_FOLDER'] + request.args['filename']
-    sf = sf.join(image_deep_features(filename, deep_learning_model), how='left')
+    image_sf = image_deep_features(filename, deep_learning_model)
+    print image_sf
+    sf = sf.join(image_sf, how='left')
+    print sf
+    print "---------------"
 
     #Define category
     category = boosted_trees_category_classifier.predict(sf, output_type='class')[0]
