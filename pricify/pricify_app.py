@@ -72,10 +72,8 @@ def predict_price():
     sf = count_words(sf)
     filename = app.config['UPLOAD_FOLDER'] + request.args['filename']
     image_sf = image_deep_features(filename, deep_learning_model)
-    print image_sf
     sf['deep_features'] = image_sf['deep_features']
-    print sf
-    print "---------------"
+
 
     #Define category
     category = boosted_trees_category_classifier.predict(sf, output_type='class')[0]
@@ -145,4 +143,4 @@ if __name__ == '__main__':
     phones, home, apparel = load_data()
 
     # Start Flask app
-    app.run(host='0.0.0.0', port=PORT, debug=True)
+    app.run(host='0.0.0.0', port=PORT, debug=True, threaded=True)

@@ -121,14 +121,16 @@ def model_features(sf):
                 ))
 
 
-# Model to classify categiry by image, title and description
+
+# Nearest Neighbors models to classify categiry by image, title and description
+
 def nearest_neighbors_categiry_classifier(sf, name):
     model = graphlab.nearest_neighbors.create(sf, features=['deep_features', 'count_words'], label='id')
 
     model.save(WEB_APP_DATA_PATH + 'nearest_neighbors_categiry_for_' + name)
     return model
 
-# Nearest Neighbors models to classify categiry by image, title and description
+# Model to classify categiry by image, title and description
 def category_classifier(sf):
     model = graphlab.boosted_trees_classifier.create(sf, target='category_name',
                                           features=['deep_features', 'count_words'],
