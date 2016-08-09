@@ -29,7 +29,7 @@ All data were scraped from OfferUp (offerupnow.com). OfferUp is mobile marketpla
 
 items.json contains 300,304 unique items with 34 fields per item. Items belong to 37 different categories.
 
-To simplify the model, we picked most interesting categories and joined them into 2 supercategories:
+To simplify the model, we picked most interesting categories and joined them into 3 supercategories:
 
 ```
 Baby & Kids              37114
@@ -41,29 +41,25 @@ Furniture                22857
 Household                21974
 Home & Garden            9529
 
-Cell Phones              14307 - select phones
-Electronics              14967 - select phones
+Cell Phones              14307
 ```
 
 Models were trained and fine-tuned for each supercategory separately.
 
-### Selected features
+### Text processing:
 features = ['id', 'description', 'title', 'category_name', 'price']
 
+Topic model with TF-IDF vectorization of product title and description is used here. Topics are used as features in training BoostedTreesRegression and BoostedTreesClassifier models.
 
-#### Image processing:
-For images I'm using GraphLab Create API extract_features method which is a pre-trained model for ImageNet, as described by Alex Krizhevsky et. al. (https://static.turi.com/products/graphlab-create/resources/models/python2.7/imagenet_model_iter45 ).  It requires 256 x 256 x 3 images. and takes an input, propagates each example through the network, and returns an SArray of feature vectors. These feature vectors I use as input to train BoostedTreesRegression and BoostedTreesClassifier models.
+### Image processing:
+For image processing we used pre-trained model of Alexnet (https://static.turi.com/products/graphlab-create/resources/models/python2.7/imagenet_model_iter45), which was fitted on our data using GraphLab Create extract_features API. Its architecture allows it to work only with fixed-size 256 x 256 x 3 images. Model returns an SArray of feature vectors which are then used as input to train BoostedTreesRegression and BoostedTreesClassifier models.
 
-### References:
+#### References:
 Krizhevsky, Alex, Ilya Sutskever, and Geoffrey E. Hinton. “Imagenet classification with deep convolutional neural networks.” Advances in neural information processing systems. 2012.
-
-#### Text processing:
-
-I build topic model based on TF-IDF vectorization of product title and description and use topics as features in training BoostedTreesRegression and BoostedTreesClassifier models.
 
 ### Nearest Neighbors
 
-On the last step I use BoostedTreesRegression model to predict the exact price and Nearest Neighbors model to get top 5 nearest offers to display for user and choose median price value as recommendation.
+On the last step BoostedTreesRegression model predicts the exact price and Nearest Neighbors model finds top 5 nearest offers to display for user.
 
 ### Model - How it works from data side
 
@@ -73,28 +69,26 @@ On the last step I use BoostedTreesRegression model to predict the exact price a
 
 ![How it works from user side](images/user_side.png)
 
-
 ### Results
 
-Result shows that it works good for clear cases as:
+Results look promising for some cases:
 
-### Phones
+#### Phones
 ![Phone category](images/phone.png)
 
-### Single furniture
+#### Single furniture items
 ![Home category](images/home.png)
 
-### But it can not separate expensive strollers from simple ones
+#### But not so much for items that look alike, but differ in price greatly:
 ![Apparel and kids category](images/kids.png)
 
-### Or sometime confuses about guessing right product
+#### And it can even get confused about the product type:
 ![Issues](images/issues_img.png)
 
 ## Future Work
-* Add weight to text features and use more advanced featurization techniques with text (e.g. Doc2Vec) to maximaze information extraction from the data.
+* Add weights to text features and use more advanced featurization techniques with text (e.g. Doc2Vec) to maximize information extraction from the data.
 * Predict price interval instead of exact price.
-* Build own Neural Network which will use mobile format size of image instead of 256 x 256.
-
+* Architect neural net specifically fitted for kind of images used and supporting different aspect ratios.
 
 ## Packages used
 * NumPy
