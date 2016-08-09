@@ -1,7 +1,5 @@
 # Price recommender
-Galvanize Data Science Program
-Capstone Project
-Tetyana Kutsenko
+Galvanize Data Science Program. Capstone Project.
 
 ![Pricify](images/pricify.png)
 
@@ -77,9 +75,18 @@ On the last step I use BoostedTreesRegression model to predict the exact price a
 
 ### Results
 
+Result shows that it works good for clear cases as:
+
+### Phones
 ![Phone category](images/phone.png)
+
+### Single furniture
 ![Home category](images/home.png)
+
+### But it can not separate expensive strollers from simple ones
 ![Apparel and kids category](images/kids.png)
+
+### Or sometime confuses about guessing right product
 ![Issues](images/issues_img.png)
 
 ## Future Work
