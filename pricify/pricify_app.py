@@ -1,6 +1,8 @@
-from flask import Flask, request, render_template, redirect, url_for, send_from_directory, session
+from flask import Flask, request, render_template, redirect, url_for
+from flask import send_from_directory, session
 import graphlab
-import re, string
+import re
+import string
 import graphlab.aggregate as agg
 import os
 from werkzeug import secure_filename
@@ -31,20 +33,25 @@ app.secret_key = 'z7XdA3Cov8JCg4F~7qRK2QB7ZK?939XyzI'
 DATA = []
 TIMESTAMP = []
 
+
 # For a given file, return whether it's an allowed type or not
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
+
 # Route that will process the file upload
 @app.route('/upload', methods=['POST'])
 def upload():
     # Get the name of the uploaded file
-    title = str(unicode(request.form['product_title']).encode('ascii', 'ignore'))
-    description = str(unicode(request.form['product_description']).encode('ascii', 'ignore'))
+    title = str(unicode(request.form['product_title']).encode('ascii',
+                                                              'ignore'))
+    description = str(unicode(request.form['product_description'])
+                      .encode('ascii', 'ignore'))
     session['title'] = title
     session['description'] = description
 
@@ -59,7 +66,6 @@ def upload():
         # Redirect the user to the uploaded_file route, which
         # will basicaly show on the browser the uploaded file
         return redirect(url_for('predict_price', filename=filename))
-        #redirect(url_for('.do_foo', messages=messages))
 
 
 @app.route('/price')
@@ -67,18 +73,17 @@ def predict_price():
     title = session['title']
     description = session['description']
 
-    #Build dataframe to vectorize input data
-    sf = graphlab.SFrame({'title' : [title], 'description' : [description]})
+    # Build dataframe to vectorize input data
+    sf = graphlab.SFrame({'title': [title], 'description': [description]})
     sf = count_words(sf)
     filename = app.config['UPLOAD_FOLDER'] + request.args['filename']
     image_sf = image_deep_features(filename, deep_learning_model)
     sf['deep_features'] = image_sf['deep_features']
 
-
-    #Define category
+    # Define category
     category = boosted_trees_category_classifier.predict(sf, output_type='class')[0]
 
-    #Define data class
+    # Define data class
     if category == 'Cell Phones':
         topic_model = topic_model_phones
         price_model = boosted_trees_regression_for_phones
@@ -93,7 +98,7 @@ def predict_price():
         vectorizer = vectorizer_home
         data = home
         category_name = 'home'
-    else: # 'Baby & Kids', 'Clothing & Shoes'
+    else:  # 'Baby & Kids', 'Clothing & Shoes'
         topic_model = topic_model_apparel
         price_model = boosted_trees_regression_for_apparel
         neighbors_model = similar_images_for_apparel
@@ -101,23 +106,30 @@ def predict_price():
         data = apparel
         category_name = 'apparel'
 
-    #Add topic fields
+    # Add topic fields
     sf = add_topic_fields(sf, topic_model)
 
-    #Add TF-IDF
+    # Add TF-IDF
     transformed_sf = vectorizer.transform(sf)
     sf['tfidf'] = transformed_sf['count_words']
 
-    #Predict price
+    # Predict price
     price = round(price_model.predict(sf)[0])
 
-    #Find nearest_neighbors
-    neighbors = neighbors_model.query(sf, k = 5)
-    neighbors = neighbors.groupby(key_columns='query_label', operations={"neighbours":agg.CONCAT("reference_label")})
+    # Find nearest_neighbors
+    neighbors = neighbors_model.query(sf, k=5)
+    neighbors = neighbors.groupby(key_columns='query_label',
+                                  operations={"neighbours":
+                                              agg.CONCAT("reference_label")})
     neighbors_lst = neighbors['neighbours'][0]
     similar_offers = data.filter_by(neighbors_lst, 'id')
-    similar_offers['image_path'] = similar_offers['id'].apply(lambda x: IMAGES_FOLDER + category_name + "/" + str(x) + '.jpg')
-    return render_template('price.html', price = price, category = category, image = filename, offers = similar_offers)
+    similar_offers['image_path'] = similar_offers['id'].apply(lambda x:
+                                                              IMAGES_FOLDER +
+                                                              category_name +
+                                                              "/" + str(x) +
+                                                              '.jpg')
+    return render_template('price.html', price=price, category=category,
+                           image=filename, offers=similar_offers)
 
 
 # This route will clear the variable sessions
@@ -132,11 +144,12 @@ def clearsession():
 
 
 if __name__ == '__main__':
-    boosted_trees_category_classifier, topic_model_phones, topic_model_apparel, \
+    boosted_trees_category_classifier, topic_model_phones, topic_model_apparel,\
     topic_model_home, vectorizer_phones, vectorizer_apparel, vectorizer_home, \
-    boosted_trees_regression_for_phones, boosted_trees_regression_for_apparel, \
-    boosted_trees_regression_for_home, similar_images_for_phones, similar_images_for_apparel, \
-    similar_images_for_home, deep_learning_model = load_models()
+    boosted_trees_regression_for_phones, boosted_trees_regression_for_apparel,\
+    boosted_trees_regression_for_home, similar_images_for_phones, \
+    similar_images_for_apparel, similar_images_for_home, \
+    deep_learning_model = load_models()
 
     phones, home, apparel = load_data()
 
