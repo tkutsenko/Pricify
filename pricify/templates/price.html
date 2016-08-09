@@ -3,6 +3,7 @@
   <head>
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
           rel="stylesheet">
+    <link href="../static/css/main.css" rel="stylesheet">
   </head>
   <body>
     <div class="container">
@@ -10,21 +11,25 @@
         <h3 class="text-muted">We are trying to predict product price</h3>
       </div>
       <hr/>
-      <p>
-          Your product:
-          <img src="{{ image }}" width="189" height="255" alt="item"></img>
-      </p>
-      <p>
-          Your product category:
-          {{ category }}
-      </p>
-      <p>
-          Suggested price: {{ price }}
-      </p>
-      <p>
+      <div class="product_image">
+          <h3>Your product:</h3>
+          <div>
+            <img src="{{ image }}" width="189" height="255" alt="item"></img>
+          </div>
+      </div>
+      <div class="product_prediction">
+        <p>
+          Predicted category: <strong>{{ category }} </strong>
+        </p>
+        <p>
+          Suggested price: <strong> {{ price }} </strong>
+        </p>
+      </div>
+      <div class="clear"></div>
+      <h3>
           Similar Offers:
-      </p>
-      <table border="1">
+      </h3>
+      <table border="1"  class="product_header">
         <tbody>
           <tr>
             {% for offer in offers %}  <!--start for loop over variable data-->
