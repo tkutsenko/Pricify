@@ -33,8 +33,7 @@ To simplify the model, we picked most interesting categories and joined them int
 
 ```
 Baby & Kids              37114
-Clothing & Shoes         27743
-Games & Toys              8149  
+Clothing & Shoes         27743  
 
 
 Furniture                22857
