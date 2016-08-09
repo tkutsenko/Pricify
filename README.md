@@ -4,31 +4,32 @@ Galvanize Data Science Program. Capstone Project.
 ![Pricify](images/pricify.png)
 
 ## Overview
-Price recommendation by product picture. It aims to save your time and money recommending fair market price for product by analyzing title, description and finding similar items by picture. As OfferUp says that "With a single snap, you can take a photo of an item and instantly circulate it to people nearby.", it sounds interesting to suggest the price, so you can take a photo of item and decide either you should sell it or not.
+Price recommendation by product picture. Project aims to save your time and money predicting fair market price for product by analyzing title, description and finding similar items by picture. As OfferUp says, "with a single snap, you can take a photo of an item and instantly circulate it to people nearby". It's not exactly true as one still has to set price which could be hard without research. This project fills the gap and allows for true one-click listing.
 
-Analysis was conducted on an Amazon Web Services instance using NLP and Neural Network.
+Analysis was conducted on an Amazon Web Services EC2 instance using NLP and Neural Network.
 
 
 ## Data source
 All data were scraped from OfferUp (offerupnow.com). OfferUp is mobile marketplace that provides safe and convenient place to easily buy and sell used goods.
-script/scrap_offerup.rb  - HTTP Request to https://offerupnow.com/ and scrap the recent offers page by page until the date limit was reached. Each offer was stored into file in JSON format.
 
-script/normalize_scraped.rb - Spliting and combining offers into 3 JSON files, I got:
+**script/scrap_offerup.rb** issues HTTP requests to https://offerupnow.com/ and scraps recent offers page by page until the date limit was reached. Each offer is stored into file in JSON format.
+
+**script/normalize_scraped.rb** splits and combines offers into 3 JSON files, namely:
 
 * items.json 605 Mb 380,107 items
 * owners.json 141.2 Mb item owners
 * images.json 214.1 Mb links to item images
 
-script/download_images.rb - 3 size of images organizes into subfolders with offer-id name.
+**script/download_images.rb** downloads images and sorts them between subfolders by size:
 * detail
 * full
 * list
 
 ## Data Preparation
 
-Start from item.json. I got 300,304 rows and 34 columns - offers in 37 categories of items.
+items.json contains 300,304 unique items with 34 fields per item. Items belong to 37 different categories.
 
-To simplify the model, let's decrease the number of categories.
+To simplify the model, we picked most interesting categories and joined them into 2 supercategories:
 
 ```
 Baby & Kids              37114
@@ -44,7 +45,7 @@ Cell Phones              14307 - select phones
 Electronics              14967 - select phones
 ```
 
-I train models on each of these groups separately and use different models for each of three categories.
+Models were trained and fine-tuned for each supercategory separately.
 
 ### Selected features
 features = ['id', 'description', 'title', 'category_name', 'price']
