@@ -80,7 +80,7 @@ On the last step I use BoostedTreesRegression model to predict the exact price a
 ![Phone category](images/phone.png)
 ![Home category](images/home.png)
 ![Apparel and kids category](images/kids.png)
-![Issues](images/issues.png)
+![Issues](images/issues_img.png)
 
 ## Future Work
 * Add weight to text features and use more advanced featurization techniques with text (e.g. Doc2Vec) to maximaze information extraction from the data.
