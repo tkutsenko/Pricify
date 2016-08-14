@@ -1,8 +1,9 @@
 import graphlab
 import re
 
+
 def extract_image_features():
-    #Used graphlab.neuralnet_classifier.NeuralNetClassifier.extract_features which takes an input dataset, propagates each example through the network, and returns an SArray of dense feature vectors, each of which is the concatenation of all the hidden unit values at layer[layer_id].
+    # Used graphlab.neuralnet_classifier.NeuralNetClassifier.extract_features which takes an input dataset, propagates each example through the network, and returns an SArray of dense feature vectors, each of which is the concatenation of all the hidden unit values at layer[layer_id].
     #Used a pre-trained model for ImageNet, as described by Alex Krizhevsky et. al. It is located at http://s3.amazonaws.com/dato-datasets/deeplearning/imagenet_model_iter45
 
     items = graphlab.SFrame.read_json('../data/items.json')
